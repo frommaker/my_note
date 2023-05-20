@@ -1,0 +1,11 @@
+打开一个别人的项目时，头文件报错问题
+
+1.在c_cpp_properties.json文件上的includePath上修改
+
+2.将这个项目的所有头文件包含进去，如：
+"D:/Odrive/odrive_project/project1/my_odrive/Firmware/Board/v3/**",
+此时因为v3内还有很多层，所以直接用**代替了，还可以这样：
+"D:/Odrive/odrive_project/project1/my_odrive/Firmware/communication",
+（可以尝试相对路径）
+
+3.如果还不行，修改compilerPath，看电脑安装了gcc还是gnu compiler等不同的编译器，根据路径修改

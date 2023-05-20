@@ -1,0 +1,90 @@
+1.创建 ROS 工作空间
+mkdir -p xxx_ws/src(必须得有 src)
+cd xxx_ws
+catkin_make
+
+
+
+
+
+2.启动 vscode
+cd xxx_ws
+code 
+
+
+
+
+
+3.创建 ROS 功能包
+选定 src 右击 ---> create catkin package
+设置包名 添加依赖 如 pub    roscpp rospy std_msgs
+ 
+ 
+ 
+ 
+ 
+4.在功能包的 src 下右键新建 cpp 文件 
+如   demo01_pub.cpp
+然后编写C++代码
+
+#include "ros/ros.h"
+
+int main(int argc, char *argv[])
+{
+    setlocale(LC_ALL,"");
+    //执行节点初始化
+    ros::init(argc,argv,"HelloVSCode");
+
+    //输出日志
+    ROS_INFO("Hello VSCode!!!哈哈哈哈哈哈哈哈哈哈");
+    return 0;
+}
+
+python文件
+在功能包上右键新建文件夹，命名为scripts，然后在该文件夹下创建py文件
+如 demo01_pub_p.py
+然后编写python代码
+
+#! /usr/bin/env python
+import rospy
+
+if __name__=="__main__":      注意main这里前后都是两个下划线
+    rospy.init_node("hello_p")
+    rospy.loginfo("hello vscode! 这是python。")
+
+然后右键scripts打开终端，给所有py文件添加可执行权限 chmod +x *.py
+可以再输入  ll  来查看是否已经赋予权限（rwxr）
+
+
+
+
+
+5.修改vscode/c_cpp_properties.json文件，设置 "cppStandard": "c++17"
+  配置 CMakeLists.txt（其中节点名称最好和源文件名称一致）
+  add_executable(节点名称     
+  src/C++源文件名.cpp
+)
+target_link_libraries(节点名称
+  ${catkin_LIBRARIES}
+  
+python配置
+在CMakeLists.txt里162行左右取消catkin_install_python的注释，只需改第二行第二个为py文件名
+catkin_install_python(PROGRAMS
+  scripts/hello_vscode_p.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+  
+  
+  
+  
+6.编译运行
+快捷键 ctrl + shift + B 调用编译，选择:catkin_make:build
+点击下方的加号，添加终端，编写：
+source ./devel/setup.bash
+rosrun 功能包名 节点名   (节点名不用后缀）
+
+python运行
+前面同理，后面
+rosrun 功能包名 py名.py
+  
+

@@ -1,0 +1,12 @@
+1.先随便在一个文件夹初始化用户名和邮箱
+2.设置SSH密钥
+3.打开vscode，克隆已有代码，打开父存储库
+4.修改路径或编译器使其无编译错误
+（将所有osSemaphore函数的调用全部将第一个输入参数用(osSemaphoreDef_t*)修饰）
+5.由于autogen文件夹被忽略了，重新下载可能需要的插件
+pip install jinja2
+pip install jsonschema
+然后在firmware文件夹下mkdir autogen
+最后：
+python -B interface_generator_stub.py --definitions odrive-interface.yaml --generate-endpoints ODrive --template fibre/cpp/endpoints_template.j2 --output autogen/endpoints.hpp
+

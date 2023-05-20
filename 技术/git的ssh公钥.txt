@@ -1,0 +1,15 @@
+1.任意git终端输入；ssh-keygen -t rsa -C "邮箱"
+
+2.然后点击enter默认存放路径等等，
+
+3.然后可以到/c/Users/levovo/.ssh/id_rsa路径下找到id_rsa.pub，
+
+4.用记事本打开，全部复制
+
+5.到github设置-ssh密钥窗口输入即可
+
+6.ssh -T git@github.com测试ssh连接，如果有hi字样即可
+
+7.后续下载、上传都用ssh链接即可
+
+公钥路径：/c/Users/levovo/.ssh/id_rsa

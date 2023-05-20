@@ -1,0 +1,47 @@
+1.创建工作空间并初始化：
+mkdir -p 自定义空间名称/src
+cd 自定义空间名称
+catkin_make
+
+2.进入 src 创建 ros 包并添加依赖
+cd src
+catkin_create_pkg 自定义ROS包名 roscpp rospy std_msgs
+cd 自定义的包 
+
+3.在src内创建文档，修改为xx.cpp 
+//三层，第一层是工作空间，第二层是功能包，第三层是源文件，其中只有源文件有.cpp
+
+#include "ros/ros.h"
+
+int main(int argc, char *argv[])
+{
+    //执行 ros 节点初始化
+    ros::init(argc,argv,"hello");
+    //创建 ros 节点句柄(非必须)
+    ros::NodeHandle n;
+    //控制台输出 hello world
+    ROS_INFO("hello world!");
+
+    return 0;
+}
+
+4.编辑 ros 包下的 Cmakelist.txt文件
+add_executable(步骤3的源文件名
+  src/步骤3的源文件名.cpp
+)
+target_link_libraries(步骤3的源文件名
+  ${catkin_LIBRARIES}
+)
+
+6.进入工作空间目录并编译
+cd 自定义空间名称
+catkin_make
+
+7.执行
+roscore
+启动命令行2
+cd 工作空间
+source ./devel/setup.bash
+rosrun 包名 源文件名   
+如rosrun hello hello1 
+

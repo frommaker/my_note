@@ -1,0 +1,38 @@
+1.查看某话题的输出（中文可能会有乱码问题） ：rostopic echo 话题
+
+2.运行AppImage文件：先进人该文件所在文件夹，然后
+添加可执行权限：     chmod a+x *.AppImage    最后执行：  ./*.AppImage
+
+3.在某个文件夹的终端打开后，可以输入 pwd 来获取该文件夹的路径
+
+4.可以使用 rqt_graph 查看节点关系
+
+5.出现add_action_files() directory not found或add_service_files() directory not found，可以在该功能包的CMake文件下对应行（话题为59，其余在上下）加上  DIRECTORY src/  一行（在FILES上面）
+(或干脆不要将.srv文件放在src目录下，而是在功能包下）
+
+6.测试某服务： rosservice call 话题 ,写下话题名后，按空格，然后按tab，会出现要输入的参数，直接修改即可。（也可以这样： 话题 参数1 参数2）（先在终端source一下才会有补全）
+
+7.服务通信时，若需要客户端输入参数值，格式为：  rosrun 功能包 源文件 参数1 参数2
+
+8.查看参数服务器的参数，可以用rosparam list来列出所有的参数的名称，然后可以用rosparam get /参数名
+来获取该参数对应的值，如rosparam get /type 来获取参数type的值（键值对,键是名称）
+
+9.查看节点的各类函数，用rosnode或rosnode -h，话题、服务相似；
+
+10.想要每次都不用source ./devel/setup.bash ，可以在终端输入gedit ~/.bashrc ,然后在最后输入
+   source ~/demo03_ws/devel/setup.bash 即可 （如果不同工作空间，需要更改demo03_ws）
+   
+11.输入rosnode、rostopic等指令时可以在后面加上-h，这样就输出这个指令的帮助信息
+
+12.运行一个程序后，可以通过rostopic list和rqt_graph来获取想要知道的话题和节点名，然后通过
+rostopic info 话题名  可以知道该话题发布、订阅方以及话题消息名；
+通过rosmsg info /消息名  可以知道该消息的格式。
+
+13.如果是服务消息类型，可以通过rossrv info 类型名  等操作操控，和话题消息指令 rosmsg 类似
+其中响应的结果是该类型的格式，会通过---分割命令和响应的格式.
+
+14.输入clear可以清除终端上的输出信息。
+
+15.在主文件夹终端打开，输入source ~/.bashrc 可刷新环境变量，在.bashrc里设置。
+
+16.通过chmod +x 文件名 可赋予文件可执行权限，在终端输入 ./可执行文件 即可执行有执行权限的文件。

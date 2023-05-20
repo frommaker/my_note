@@ -1,0 +1,5 @@
+1.安装nvim9.0
+snap install nvim --classic 
+
+2.s安装kitty终端
+sudo apt install kitty -y

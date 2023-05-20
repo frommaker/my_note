@@ -1,0 +1,6 @@
+1.打开bashrc
+sudo gedit ~/.bashrc 或 vim ~/.bashrc
+
+2.添加环境变量
+PATH=$PATH:/usr/local/LAMP/php/bin:/usr/local/LAMP/mysql/bin（若多个，用冒号：分隔）
+export PATH

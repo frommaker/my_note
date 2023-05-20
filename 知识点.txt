@@ -1,0 +1,65 @@
+1.话题通信时，两方的节点不同，但话题相同；
+
+2.话题通信时，是在一个功能包下添加两个源文件，CMakeLists.txt里也要复制修改的内容，只是文件名不同；
+
+3.工作空间名生成后不能更改；
+
+4.可以使用 rqt_graph 查看节点关系；
+
+5.订阅时，第一条数据会丢失，原因是发送第一条数据时， publisher 还未在 roscore 注册完毕，要加入休眠 ros::Duration(3.0).sleep(); 延迟第一条数据的发送；
+
+6.main函数的第一个参数argc表示该函数的输入参数个数，其中第一个为固有的文件名，若需要客户端输入两个参数，则argc等于3；
+
+7.参数服务器相当于全局变量，其中删除操作只能进行一次;
+
+8.noetic版本不支持python2，所以如果解释器设置为#! /usr/bin/env python，需要配置CMakeLists文件；
+而如果设置为#! /usr/bin/env python3则不需要进行配置。
+
+9.注意python要添加可执行权限，在scripts内打开终端输入chmod +x *.py ，此时赋予的是所有现存的py文件。
+如果新建py文件，还要重新赋予。(右边为绿色说明已经赋予）
+
+10.话题回调函数的参数名是自己设定的，如const pub::Person::ConstPtr& p的p，或者python形式就是单纯的p,目的只是用于函数内的调用。
+
+11.当需要自定义消息类型时，需要配置vscode，这样不会误抛异常以及会有代码提示，在.vscdoe的settings.json里的python.autoComplete.extraPaths里面添加
+"/home/ygj/demo03_ws/devel/lib/python3/dist-packages"（注意工作空间）（不配置不会有影响）
+
+12.服务通信的服务端有回调函数，输入参数是请求的数据
+
+13.python从别的文件中导入自定义服务消息时，是from 功能包.srv import * (不是src,*可以换成具体函数）
+
+14.要查看自定义的消息rossrv，需要进入到工作空间目录下，source一下再查看
+
+15.launch文件的type是CMakelist文件的名字，name是节点名
+其中python的type有后缀.py，如果没权限，需要进到这个文件所在文件夹用sudo chmod +x (文件名.py)
+
+16.c++的初始化函数ros::init可以有四个参数，argc为输入实参个数，argv为实参列表，第三个是节点名，第四个可选，若设置可将同名节点加上后缀同时存在，写成ros::init_options::XX.
+若命令行启动时，rosrun 功能包 源文件 _参数:=x   可以设置参数服务器的某参数值为x（没有则创建新的）
+
+17.c++发布函数nh.advertise括号内有3个参数，< >内是发布的消息类型，括号内第一个是话题名，第二个是最大消息数量，第三个是latch，默认是false，如果设置为true，该话题发布的最后一条消息将被保存，并且后期当有订阅者连接时会将该消息发送给订阅者，用于静态地图发布。
+
+18.c++回旋函数ros::spin和ros::spinOnce，当调用spin()时，ROS节点会进入一个无限循环中，等待消息到来并调用相应的回调函数。当调用spinOnce()时，ROS节点将检查所有已注册的回调函数，如果有任何回调函数等待处理，则会立即执行它们。如果没有回调函数等待处理，就立即返回或者根据输入参数等待一段时间再返回。
+
+19.c++的时间函数需要先初始化节点句柄:
+通过ros::Time right_now = ros::Time::now()可以将当前时间封装成对象;
+通过ros::Time someTime(100.3); 此时sometime的时间是对应1970.01.01零时零分零秒之后的100.3秒;
+通过ros::Duration du(10);实例化一个10秒的时间对象，通过du.sleep();可以按照指定的时间休眠；
+时间对象的方法sec和toSec都是持续时间，整数和浮点区别，而时刻对象的两个都是距离1970...的秒数。
+通过ros::Time now = ros::Time::now(); ros::Duration du1(10);以及ros::Time after_now = now + du1;可以获取加减后的时间，其中Time和Duration、Duration之间均可加减，Time（时刻）之间不可以；
+通过ros::Rate rate(1);可以实例化频率为1的对象，通过在循环中调用rate.sleep();可以精确控制循环程序运行时间为1/频率，如果运行时间大于该值，则以运行时间为准。（ros::Duration类似，但只是单纯延时）
+通过ros::Timer timer = nh.createTimer(ros::Duration(0.5),doSomeThing,true);可以创建一个定时器，按指定频率调用回调函数，其中第三、四个参数可选，是否只执行一次以及是否自动启动，默认为false和true。
+注意需要编写回调函数void doSomeThing(const ros::TimerEvent &event)和调用ros::spin。
+通过ros::shutdown()可以关闭节点，若正常关闭会返回false。
+
+20.c++自定义源文件调用：功能包下include下编写头文件，在src下编写源文件，最后在其他源文件下调用。
+只要包含自定义头文件，都需要 在.vscode 下 c_cpp_properties.json 包含路径："/home/用户/工作空间/src/功能包/include/**"（注意后面两个*）。以及在CmakeList里118行的include_directories去掉第二行的#
+然后去掉124行的add_library及下面的注释，在第一行取一个源文件的名，第二行新增一行，写
+include/${PROJECT_NAME}/头文件.h，第三行写src/源文件.cpp
+然后正常设置add_dependencies和target_link_libraries，注意源文件对应的是上面取的名，其他源文件的add_dependencies正常，target_link_libraries要新增一行写依赖的库文件，即上述取的名；
+最后的add_executable只需正常写其他源文件即可。
+
+21.python模块导入：新建一个Python文件A，再创建Python文件UseA，在UseA中导入A并调用A的实现
+不能直接import A,然后使用A.方法 。因为rosrun执行时,参考路径是工作空间，此时无法查找依赖的模块。可以声明python的环境变量,当依赖某个模块时，先去指定的环境变量中查找。
+import os   import sys  path=os.path.abspath(".") #获取工作空间路径
+sys.path.insert(0,path+"/src/功能包/scripts") 参数1为插入位置；然后在这个语句下面import A
+
+22.在.bashrc下通过shell可编写永久环境变量。在终端或者另一个可执行文件均可调用，如终端echo haha。
