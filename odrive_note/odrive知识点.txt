@@ -1,0 +1,12 @@
+1.在一些不确定是C还是C++的编译器里，通常将.h文件写成如下形式，在头文件里extern "C"后，一般不需要在源文件中对函数定义进行extern "C"
+#ifdef __cplusplus
+extern "C" {  
+#endif
+头文件代码
+#ifdef __cplusplus
+}
+#endif
+
+2.由代码的亮暗可以知道该代码是否会被编译，如第一点，编译器为C编译器，则上述extern "C"的C++代码不会被编译，但中间的头文件代码还是会被编译
+
+3.所有的对象都在main.cpp的load_configuration函数内构造，其中一些初始化结构体在board_config_v3.h的76行

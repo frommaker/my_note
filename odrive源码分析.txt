@@ -1,0 +1,23 @@
+出处：my_odrive/Firmware\Board\v3\Src
+
+一.adc.c
+1.自定义三个ADC处理句柄hadc1和一个DMA处理句柄；
+2.定义三个ADC及相关IO的初始化（含中断）函数MX_ADC1_Init
+3.自定义read_ADC_volts函数，读取ADC转换结果并将其转换为电压值返回。
+
+二.can.c
+1.自定义CAN处理句柄hcan1；
+2.定义CAN1初始化函数MX_CAN1_Init和CAN1的IO、中断初始化函数HAL_CAN_MspInit，其中后者开启了四个CAN1事件的中断，前者调用后者完成初始化。
+
+三.dma.c
+1.定义dma初始化函数MX_DMA_Init，开启DMA1和DMA2的时钟，并设置DMA1的0、2、4、5四个流的中断。
+
+四.freertos.c
+1.引入自定义头文件freertos_vars.h和usb_device.h，声明odrive_main、load_configuration和construct_objects函数
+2.声明外设处理器句柄hpcd_USB_OTG_FS控制USB OTG FS外设；
+3.自定义五个osSemaphoreId类型变量和一个线程类型osThreadId变量usb_irq_thread；
+4.通过__attribute__将FreeRTOS堆的内存分配到了核心耦合内存CCM；
+5.自定义usb_deferred_interrupt_thread函数，等待sem_usb_irq信号量触发，触发后则调用HAL_PCD_IRQHandler中断函数处理USB数据传输（该函数在stm32f4xx_hal_pcd.c库），最后重新使能中断；
+6.自定义init_deferred_interrupts函数，定义一个USB中断线程task_usb_pump，对应的线程函数是usb_deferred_interrupt_thread（上面第五点），并创建实例usb_irq_thread，将其绑定在该线程上；
+7.定义freertos初始化函数MX_FREERTOS_Init，通过osSemaphoreDef函数初始化5个信号量，然后调用init_deferred_interrupts函数初始化USB线程，再调用load_configuration函数配置参数、调用construct_objects函数新建对象
+
